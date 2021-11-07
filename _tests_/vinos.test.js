@@ -46,11 +46,11 @@ describe("Create Vinos", () => {
             name: "",
             type: "",
             alcohol_percentage: "",
-            is_active: ""
+            is_active: "",
         };
         const response = await request.post("/api/vinos").send(vino);
 
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(422);
     });
 });
 
@@ -59,16 +59,22 @@ describe("Soft-deleted", () => {
         const response = await request.delete("/api/vinos/1");
 
         expect(response.status).toBe(200);
-        expect(response.body).toStrictEqual(expect.objectContaining({
-            success: expect.any(Boolean),
-          }),)
+        expect(response.body).toStrictEqual(
+            expect.objectContaining({
+                message: "element 'vino' with id 1 was removed",
+                ok: true,
+            })
+        );
     });
     it("Restore vino", async () => {
         const response = await request.get("/api/vinos/1/restore");
 
         expect(response.status).toBe(200);
-        expect(response.body).toStrictEqual(expect.objectContaining({
-            restore: expect.any(Boolean),
-          }),)
+        expect(response.body).toStrictEqual(
+            expect.objectContaining({
+                message: "element 'vino' with id 1 was restored",
+                ok: true,
+            })
+        );
     });
 });
