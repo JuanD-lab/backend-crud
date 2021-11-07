@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
             tableName: "usuarios_vinos_favoritos",
             underscored: true,
             paranoid: true,
+            deletedAt: 'deleted_at'
         }
     );
     return UsuariosVinosFavoritos;

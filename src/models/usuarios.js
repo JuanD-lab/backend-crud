@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
             tableName: "usuarios",
             underscored: true,
             paranoid: true,
+            deletedAt: 'deleted_at'
         }
     );
     return Usuarios;
