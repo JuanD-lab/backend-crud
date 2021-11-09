@@ -4,24 +4,28 @@ const { check, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
 const signOptions = { expiresIn: "4h", algorithm: "HS512" };
-const key = process.env.JWT_KEY
+const key = process.env.JWT_KEY;
 
 const createToken = (payload) => jwt.sign(payload, key, signOptions);
 
-const auth = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await Usuarios.findOne({where: {email: email, password: password}})
-    if (!user) res.status(401).json({ message: "Gatito no autorizado" });
-    console.log("hay user");
-    const { id } = user;
+const auth = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        const user = await Usuarios.findOne({
+            where: { email: email, password: password },
+        });
+        if (!user)
+            res.status(401).json({
+                ok: false,
+                message: "Usuario no autorizado",
+            });
+        const { id } = user;
 
-    const token = createToken({id, email }); // {_id : ObjectId, usuario : 'francodileo'}
-    console.log("se ce token");
-    res.json({ JWT: token });
-  } catch (e) {
-    console.log(e);
-  }
+        const token = createToken({ id, email });
+        res.json({ JWT: token });
+    } catch (error) {
+        next(error);
+    }
 };
 
 const get = async (req, res, next) => {
@@ -41,6 +45,7 @@ const get = async (req, res, next) => {
             return res.json(content);
         } else {
             return res.status(404).json({
+                ok: false,
                 message: `The content with id ${id} does not exist`,
             });
         }
@@ -48,7 +53,6 @@ const get = async (req, res, next) => {
         next(error);
     }
 };
-
 
 const create = async (req, res, next) => {
     const { name, type, alcohol_percentage, is_active } = req.body;
