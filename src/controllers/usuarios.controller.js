@@ -1,4 +1,4 @@
-const { Usuarios, Vinos } = require("../models");
+const { Usuarios, Vinos, UsuariosVinosFavoritos } = require("../models");
 const { check, validationResult } = require("express-validator");
 
 const jwt = require("jsonwebtoken");
@@ -75,6 +75,22 @@ const create = async (req, res, next) => {
     }
 };
 
+
+const addToFavorites = async (req, res, next) => {
+    const { user_id, vino_id } = req.body;
+    try {
+        const newFavorite = await UsuariosVinosFavoritos.create({
+            user_id: user_id,
+            vino_id: vino_id,
+        });
+
+        res.status(201).json(newFavorite);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 //Eliminación lógica
 const eliminate = async (req, res, next) => {
     try {
@@ -133,6 +149,7 @@ module.exports = {
     auth,
     get,
     create,
+    addToFavorites,
     eliminate,
     validateFields,
 };
